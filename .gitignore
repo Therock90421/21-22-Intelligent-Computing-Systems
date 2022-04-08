@@ -1,0 +1,12 @@
+*.npy
+*.pb
+*/pycnml
+*core.*
+experiment_2/code_chap_2_3_student/mnist_data
+*.npz
+*.mat
+experiment_4/env
+experiment_4/exp_4_2_fast_style_transfer_infer_student/pb_models
+experiment_4/exp_4_3_fast_style_transfer_train_student/ckp_temp
+*.ckpt 
+experiment_4/exp_4_4_custom_tensorflow_op_student/models/pb_models
