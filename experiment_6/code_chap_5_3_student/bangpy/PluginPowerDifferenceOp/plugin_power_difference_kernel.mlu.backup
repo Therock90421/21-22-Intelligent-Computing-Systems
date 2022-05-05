@@ -1,0 +1,29 @@
+__mlu_entry__ void PowerDifferenceKernel( half* input1, half* input2, int pow, half* output, int len) {
+   int task_id[1];
+  __nram__ half input1_nram[256];
+  __nram__ half input2_nram[256];
+  task_id[0] = ((clusterId * coreDim) + coreId);
+  if (task_id[0] == 0) {
+    for (int i = 0; i < (len / 256); ++i) {
+      __memcpy(((half *)(input1_nram + 0)), ((half *)(input1 + (i * 256))), 512, GDRAM2NRAM);
+      __memcpy(((half *)(input2_nram + 0)), ((half *)(input2 + (i * 256))), 512, GDRAM2NRAM);
+      __bang_sub(((half *)(input1_nram + 0)), ((half *)(input1_nram + 0)), ((half *)(input2_nram + 0)), 256);
+      __memcpy(((half *)(input2_nram + 0)), ((half *)(input1_nram + 0)), 512, NRAM2NRAM);
+      for (int j = 0; j < (pow - 1); ++j) {
+        __bang_mul(((half *)(input1_nram + 0)), ((half *)(input1_nram + 0)), ((half *)(input2_nram + 0)), 256);
+      }
+      __memcpy(((half *)(output + (i * 256))), ((half *)(input1_nram + 0)), 512, NRAM2GDRAM);
+    }
+    if ((len % 256) != 0) {
+      __memcpy(((half *)(input1_nram + 0)), ((half *)(input1 + ((len / 256) * 256))), ((len % 256) * 2), GDRAM2NRAM);
+      __memcpy(((half *)(input2_nram + 0)), ((half *)(input2 + ((len / 256) * 256))), ((len % 256) * 2), GDRAM2NRAM);
+      __bang_sub(((half *)(input1_nram + 0)), ((half *)(input1_nram + 0)), ((half *)(input2_nram + 0)), (len % 256));
+      __memcpy(((half *)(input2_nram + 0)), ((half *)(input1_nram + 0)), ((len % 256) * 2), NRAM2NRAM, ((len % 256) * 2), ((len % 256) * 2), 0);
+      for (int k = 0; k < (pow - 1); ++k) {
+        __bang_mul(((half *)(input1_nram + 0)), ((half *)(input1_nram + 0)), ((half *)(input2_nram + 0)), (len % 256));
+      }
+      __memcpy(((half *)(output + ((len / 256) * 256))), ((half *)(input1_nram + 0)), ((len % 256) * 2), NRAM2GDRAM);
+    }
+  }
+}
+

@@ -10,3 +10,10 @@ experiment_4/exp_4_2_fast_style_transfer_infer_student/pb_models
 experiment_4/exp_4_3_fast_style_transfer_train_student/ckp_temp
 *.ckpt 
 experiment_4/exp_4_4_custom_tensorflow_op_student/models/pb_models
+experiment_7/bert
+experiment_7/env
+experiment_7/yolov3
+experiment_7/east/EAST
+experiment_6/env
+experiment_6/code_chap_5_1_student/models
+experiment_6/code_chap_5_2_student/neuware

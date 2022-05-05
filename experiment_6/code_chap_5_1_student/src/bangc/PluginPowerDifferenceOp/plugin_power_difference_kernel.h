@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright (C) [2020] by Cambricon, Inc.
+ * Copyright (C) [2018] by Cambricon, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -21,47 +21,18 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *************************************************************************/
 
-// TODO：完成SBC BANGC算子的编写
+#ifndef _PLUGIN_POWER_DIFFERENCE_KERNEL_H_
+#define _PLUGIN_POWER_DIFFERENCE_KERNEL_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+typedef uint16_t half;
 
-#include "mlu.h"
-#include "macro.h"
+// TODO：BCL接口定义
+void PowerDifferenceKernel(half* input1, half* input2, int pow, half* output, int len);
 
-__mlu_entry__ void SBCKernel(half* input_data_, half* output_data_, int batch_num_)
-{
-    int batch_num = batch_num_;
-
-    __nram__ half split_sub_concat[HWC_SPLIT];
-    __nram__ half tmp0[192];
-
-    //多核拆分
-
-    int core_loop = 16/taskDim;
-    //循环创建cycle_sub_mask
-    for (int i = 0; i < 192; i++)
-    {
-        switch (i%3)
-        {
-            case 0:
-                tmp0[i] = 123.68;
-                break;
-            case 1:
-                tmp0[i] = 116.78;
-                break;
-            case 2:
-                tmp0[i] = 103.94;
-                break;
-        }
-    }
-
-    for (int i = 0; i < batch_num; i++)
-    {
-        for (int j = 0; j < core_loop; j++)
-        {
-            __memcpy(split_sub_concat, input_data_+i*DATA_COUNT+(j*taskDim+taskId)*HWC_SPLIT , HWC_SPLIT*sizeof(half), GDRAM2NRAM);
-            __bang_cycle_sub(split_sub_concat, split_sub_concat, tmp0, HWC_SPLIT, 192);
-            __memcpy(output_data_+i*DATA_COUNT+(j*taskDim+taskId)*HWC_SPLIT, split_sub_concat, HWC_SPLIT*sizeof(half), NRAM2GDRAM);
-        }
-        __sync_all();
-    }
+#ifdef __cplusplus
 }
+#endif
+#endif  // _PLUGIN_POWER_DIFFERENCE_KERNEL_H_

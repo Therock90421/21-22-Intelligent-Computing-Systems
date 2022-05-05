@@ -1,0 +1,20 @@
+{
+  "bang_version": "0.1.0", 
+  "func_info": {"PowerDifferenceKernel_kernel0": {
+      "name": "", 
+      "bang_config": {
+        "parallel_task_number": 1, 
+        "programming_model": 0
+      }, 
+      "mlu_arch": "MLU270", 
+      "arg_types": [
+        "handle", 
+        "handle", 
+        "handle", 
+        "int32", 
+        "int32"
+      ], 
+      "thread_axis_tags": [
+        "taskId"
+      ]}}
+}
